@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import time
+import os
 
 # Screener URL for your filtered stocks
 filtered_stocks_url = 'https://www.screener.in/screens/2033673/a/'  # Replace with your actual screen URL
