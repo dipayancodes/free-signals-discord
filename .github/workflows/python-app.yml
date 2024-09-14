@@ -24,4 +24,4 @@ jobs:
 
       - name: Run Python script
         run: |
-          python script.py # Replace with the path to your script
+          python stock_recommendation.py # Replace with the path to your script
