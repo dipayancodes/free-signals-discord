@@ -49,7 +49,7 @@ def send_to_discord(stocks):
 
     message = "<@&1284458079223812097>\n**__STOCK RECOMMENDATION__**\n\n"
     for stock in stocks:
-        message += f"**{stock['number']}** **__Name:__** **{stock['name']}** **__Price:__** **{stock['price']}** **__Market Cap:__** **{stock['market_cap']}** **__P/E Ratio:__** **{stock['pe_ratio']}** 🔥\n\n"
+        message += f"**{stock['number']}** \n **__Name:__** **{stock['name']}** \n **__Price:__** **{stock['price']}** \n **__Market Cap:__** **{stock['market_cap']}** \n **__P/E Ratio:__** **{stock['pe_ratio']}** 🔥\n\n"
 
     data = {
         'content': message
