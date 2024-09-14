@@ -9,12 +9,13 @@
             font-family: Arial, sans-serif;
             margin: 50px;
         }
-        #messageInput {
-            width: 60%;
+        #messageInput, #emergencyInput {
+            width: 90%;
             padding: 10px;
             margin-bottom: 10px;
+            text-transform: uppercase; /* Automatically transforms input to uppercase */
         }
-        #sendButton {
+        #sendButton, #sendEmergencyButton {
             padding: 10px 20px;
             background-color: #5865F2;
             color: white;
@@ -27,20 +28,65 @@
         label {
             margin-right: 15px;
         }
+        .message-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .box {
+            margin-right: 20px;
+        }
+        .response-message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+            display: none;
+        }
+        .success {
+            background-color: #28a745;
+        }
+        .error {
+            background-color: #dc3545;
+        }
     </style>
 </head>
 <body>
     <h1>Send Message to Discord</h1>
-    <input type="text" id="messageInput" placeholder="Type your message here...">
+    
+    <div class="message-container">
+        <div class="box">
+            <h2>Main Message</h2>
+            <input type="text" id="messageInput" placeholder="Type your message here...">
 
-    <div class="checkbox-group">
-        <label><input type="radio" name="tradeType" value="Call 🟢 "> Call</label>
-        <label><input type="radio" name="tradeType" value="Put 🔴 "> Put</label>
+            <div class="checkbox-group">
+                <label><input type="radio" name="tradeType" value="Call 🟢 "> Call</label>
+                <label><input type="radio" name="tradeType" value="Put 🔴 "> Put</label>
+            </div>
+
+            <button id="sendButton">Send</button>
+        </div>
+
+        <div class="box">
+            <h2>Emergency Message</h2>
+            <input type="text" id="emergencyInput" placeholder="Type emergency message here...">
+            <button id="sendEmergencyButton">Send Emergency</button>
+        </div>
     </div>
 
-    <button id="sendButton">Send</button>
+    <!-- Response message box -->
+    <div id="responseMessage" class="response-message"></div>
 
     <script>
+        // Function to show the response message on the page
+        function showMessage(message, isSuccess) {
+            const responseMessageDiv = document.getElementById('responseMessage');
+            responseMessageDiv.innerHTML = message;
+            responseMessageDiv.className = `response-message ${isSuccess ? 'success' : 'error'}`;
+            responseMessageDiv.style.display = 'block';
+        }
+
+        // Function to send the main message
         document.getElementById('sendButton').addEventListener('click', function() {
             const message = document.getElementById('messageInput').value;
             const webhookUrl = 'https://discord.com/api/webhooks/1284399123943915531/-8jSY8JXdQGyj3WrOktMi2YYOqY9ksLRVDhLAmSY1jvMRHAXfLUuUnVPDF01Vj5bq0yQ';  // Replace with your Discord webhook URL
@@ -51,26 +97,24 @@
             if (selectedTradeType) {
                 tradeType = selectedTradeType.value;
             } else {
-                alert('Please select Call or Put.');
+                showMessage('Please select Call or Put.', false);
                 return;
             }
 
             if (message.trim() === '') {
-                alert('Please enter a message.');
+                showMessage('Please enter a message.', false);
                 return;
             }
 
-            // Append @everyone and tradeType (Call or Put) to the message
-            // const finalMessage = `${message} - ${tradeType} @everyone`;
-               const finalMessage = `
-            @everyone 
-            ${'**'+message+'**'} - ${'**'+tradeType+'**'} (any strike price) 
-            **Stop Loss** - 10rs 
-            **Target for ITM** - 30rs 
-            **Target for ATM** - 20rs 
-            **Target for OTM** - 10rs
-
-`
+            // Construct the final message with @everyone ping and the trade type (Call or Put)
+            const finalMessage = `
+@everyone 
+${'**'+message+'**'} - ${'**'+tradeType+'**'} (any strike price) 
+**Stop Loss** - 10rs 
+**Target for ITM** - 30rs 
+**Target for ATM** - 20rs 
+**Target for OTM** - 10rs
+            `;
 
             fetch(webhookUrl, {
                 method: 'POST',
@@ -81,19 +125,53 @@
             })
             .then(response => {
                 if (response.ok) {
-                    alert('Message sent to Discord successfully!');
+                    showMessage('Message sent to Discord successfully!', true);
                     document.getElementById('messageInput').value = '';
-                    // Uncheck the radio button
                     document.querySelector('input[name="tradeType"]:checked').checked = false;
                 } else {
-                    alert('Error sending message.');
+                    showMessage('Error sending message.', false);
                 }
             })
             .catch(error => {
-                alert('Error: ' + error);
+                showMessage('Error: ' + error, false);
+            });
+        });
+
+        // Function to send the emergency message
+        document.getElementById('sendEmergencyButton').addEventListener('click', function() {
+            const emergencyMessage = document.getElementById('emergencyInput').value;
+            const webhookUrl = 'https://discord.com/api/webhooks/1284399123943915531/-8jSY8JXdQGyj3WrOktMi2YYOqY9ksLRVDhLAmSY1jvMRHAXfLUuUnVPDF01Vj5bq0yQ';  // Replace with your Discord webhook URL
+
+            if (emergencyMessage.trim() === '') {
+                showMessage('Please enter an emergency message.', false);
+                return;
+            }
+
+            // Construct the emergency message with @everyone ping
+            const finalEmergencyMessage = `
+@everyone 
+${'**'+emergencyMessage+'**'}
+            `;
+
+            fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ content: finalEmergencyMessage }),
+            })
+            .then(response => {
+                if (response.ok) {
+                    showMessage('Emergency message sent to Discord successfully!', true);
+                    document.getElementById('emergencyInput').value = '';
+                } else {
+                    showMessage('Error sending emergency message.', false);
+                }
+            })
+            .catch(error => {
+                showMessage('Error: ' + error, false);
             });
         });
     </script>
 </body>
 </html>
-
