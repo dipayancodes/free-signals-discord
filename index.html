@@ -88,7 +88,7 @@
 
         // Function to send the main message
         document.getElementById('sendButton').addEventListener('click', function() {
-            const message = document.getElementById('messageInput').value;
+            let message = document.getElementById('messageInput').value.toUpperCase(); // Convert message to uppercase
             const webhookUrl = 'https://discord.com/api/webhooks/1284399123943915531/-8jSY8JXdQGyj3WrOktMi2YYOqY9ksLRVDhLAmSY1jvMRHAXfLUuUnVPDF01Vj5bq0yQ';  // Replace with your Discord webhook URL
             let tradeType = '';
 
@@ -108,7 +108,7 @@
 
             // Construct the final message with @everyone ping and the trade type (Call or Put)
             const finalMessage = `
-@everyone 
+<@&1284412542562599024> 
 ${'**'+message+'**'} - ${'**'+tradeType+'**'} (any strike price) 
 **Stop Loss** - 10rs 
 **Target for ITM** - 30rs 
@@ -139,7 +139,7 @@ ${'**'+message+'**'} - ${'**'+tradeType+'**'} (any strike price)
 
         // Function to send the emergency message
         document.getElementById('sendEmergencyButton').addEventListener('click', function() {
-            const emergencyMessage = document.getElementById('emergencyInput').value;
+            let emergencyMessage = document.getElementById('emergencyInput').value.toUpperCase(); // Convert emergency message to uppercase
             const webhookUrl = 'https://discord.com/api/webhooks/1284399123943915531/-8jSY8JXdQGyj3WrOktMi2YYOqY9ksLRVDhLAmSY1jvMRHAXfLUuUnVPDF01Vj5bq0yQ';  // Replace with your Discord webhook URL
 
             if (emergencyMessage.trim() === '') {
@@ -149,7 +149,7 @@ ${'**'+message+'**'} - ${'**'+tradeType+'**'} (any strike price)
 
             // Construct the emergency message with @everyone ping
             const finalEmergencyMessage = `
-@everyone 
+<@&1284412542562599024> 
 ${'**'+emergencyMessage+'**'}
             `;
 
